@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: dom, gd, intl, mbstring, pdo_mysql, zip
+          coverage: none
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install, validate, and capture report
+        run: |
+          set -Eeuo pipefail
+          mkdir -p test-results
+          composer install --no-interaction --prefer-dist 2>&1 | tee test-results/ci.log
+          npm ci 2>&1 | tee -a test-results/ci.log
+          npm run build 2>&1 | tee -a test-results/ci.log
+          bash scripts/ci.sh 2>&1 | tee -a test-results/ci.log
+
+      - name: Upload CI report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-validation-report
+          path: test-results/ci.log
+          if-no-files-found: warn
+
+  build:
+    needs: checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build image
+        run: docker build --tag librarian:${{ github.sha }} .
