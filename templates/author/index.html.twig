@@ -1,0 +1,39 @@
+﻿{% extends 'base.html.twig' %}
+{% block title %}Auteurs{% endblock %}
+{% block body %}
+<div class="page-header fade-up">
+  <div><div class="page-eyebrow">References</div><h2>Auteurs</h2></div>
+  {% if is_granted('ROLE_ADMIN') %}<a href="{{ path('app_author_new') }}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Nouvel auteur</a>{% endif %}
+</div>
+<div class="table-wrapper fade-up">
+  <table class="table">
+    <thead><tr><th>Auteur</th><th>Adresse de travail</th><th>Centres d'interet</th><th>Origine</th><th class="text-end">Actions</th></tr></thead>
+    <tbody>
+    {% for author in authors %}
+    <tr>
+      <td>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:32px;height:32px;background:var(--gold-light);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--gold);font-family:var(--font-display);font-weight:700;font-size:13px;flex-shrink:0;">{{ author.name|first|upper }}</div>
+          <div style="font-family:var(--font-display);font-weight:600;color:var(--text);">{{ author.name }} {{ author.surname }}</div>
+        </div>
+      </td>
+      <td style="font-size:13px;color:var(--text-muted);">{{ author.workAddress ?? '—' }}</td>
+      <td>
+        {% if author.interest1 %}<span class="badge-keyword">{{ author.interest1 }}</span>{% endif %}
+        {% if author.interest2 %}<span class="badge-keyword">{{ author.interest2 }}</span>{% endif %}
+        {% if author.interest3 %}<span class="badge-keyword">{{ author.interest3 }}</span>{% endif %}
+        {% if not author.interest1 and not author.interest2 and not author.interest3 %}—{% endif %}
+      </td>
+      <td style="font-size:13px;color:var(--text-muted);">{{ author.origin ?? '—' }}</td>
+      <td class="text-end">
+        <a href="{{ path('app_author_show', {'id': author.id}) }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-eye"></i></a>
+        {% if is_granted('ROLE_ADMIN') %}<a href="{{ path('app_author_edit', {'id': author.id}) }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-pencil"></i></a>{% endif %}
+      </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="5"><div class="empty-state"><i class="bi bi-person-x"></i><p>Aucun auteur enregistre.</p></div></td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

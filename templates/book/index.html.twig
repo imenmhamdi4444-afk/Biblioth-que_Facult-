@@ -1,0 +1,69 @@
+﻿{% extends 'base.html.twig' %}
+{% block title %}Livres{% endblock %}
+{% block body %}
+<div class="page-header fade-up">
+  <div>
+    <div class="page-eyebrow">Catalogue</div>
+    <h2>Livres</h2>
+  </div>
+  {% if is_granted('ROLE_ADMIN') %}
+  <a href="{{ path('app_book_new') }}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Nouveau livre</a>
+  {% endif %}
+</div>
+<form method="GET" action="{{ path('app_book_index') }}" class="mb-4 fade-up">
+  <div class="d-flex gap-2 align-items-center">
+    <div class="search-bar" style="max-width:440px;flex:1;">
+      <i class="bi bi-search"></i>
+      <input type="text" name="keyword" class="form-control" placeholder="Titre, code, mots cles..." value="{{ keyword }}">
+    </div>
+    <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Rechercher</button>
+    {% if keyword %}<a href="{{ path('app_book_index') }}" class="btn btn-outline-secondary"><i class="bi bi-x-lg"></i></a>{% endif %}
+  </div>
+  {% if keyword %}<p style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);margin-top:10px;letter-spacing:.05em;">{{ books|length }} resultat(s) pour « {{ keyword }} »</p>{% endif %}
+</form>
+<div class="table-wrapper fade-up">
+  <table class="table">
+    <thead><tr>
+      <th>Couverture</th><th>Code</th><th>Titre</th><th>Auteur(s)</th>
+      <th>Editeur</th><th>Annee</th><th>Stock</th><th>Disponibilite</th><th class="text-end">Actions</th>
+    </tr></thead>
+    <tbody>
+    {% for book in books %}
+    <tr>
+      <td>
+        {% if book.image %}
+          <img src="{{ asset('uploads/covers/' ~ book.image) }}" alt="{{ book.title }}" style="width:38px;height:52px;object-fit:cover;border-radius:2px;border:1px solid var(--border);">
+        {% else %}
+          <div style="width:38px;height:52px;background:var(--gold-light);border-radius:2px;display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:14px;"><i class="bi bi-book"></i></div>
+        {% endif %}
+      </td>
+      <td><code>{{ book.code }}</code></td>
+      <td>
+        <div style="font-family:var(--font-display);font-weight:600;color:var(--text);font-size:14px;">{{ book.title }}</div>
+        {% if book.keywords %}<div style="margin-top:4px;">{% for kw in book.keywords|split(',')|slice(0,2) %}<span class="badge-keyword">{{ kw|trim }}</span>{% endfor %}</div>{% endif %}
+      </td>
+      <td>{% for a in book.authors %}<span class="badge bg-secondary">{{ a }}</span> {% else %}—{% endfor %}</td>
+      <td style="font-size:12px;color:var(--text-muted);">{{ book.publisher ? book.publisher.raisonSociale : '—' }}</td>
+      <td style="font-size:12px;color:var(--text-muted);">{{ book.publicationDate ? book.publicationDate|date('Y') : '—' }}</td>
+      <td style="font-size:12px;">
+        <span class="badge bg-primary">{{ book.nbCopiesAcquired }}</span> / <span class="badge {% if book.nbCopiesBorrowed > 0 %}bg-warning{% else %}bg-success{% endif %}">{{ book.nbCopiesBorrowed }}</span>
+      </td>
+      <td>
+        {% set available = book.nbCopiesAcquired - book.nbCopiesBorrowed %}
+        {% if available > 0 %}<span class="badge bg-success">{{ available }} dispo</span>
+        {% else %}<span class="badge bg-danger">Epuise</span>{% endif %}
+      </td>
+      <td class="text-end">
+        <a href="{{ path('app_book_show', {'id': book.id}) }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-eye"></i></a>
+        {% if is_granted('ROLE_ADMIN') %}
+        <a href="{{ path('app_book_edit', {'id': book.id}) }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-pencil"></i></a>
+        {% endif %}
+      </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="9"><div class="empty-state"><i class="bi bi-journal-x"></i><p>Aucun livre trouve{% if keyword %} pour « {{ keyword }} »{% endif %}.</p></div></td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

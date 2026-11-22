@@ -1,0 +1,396 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Connexion — BiblioFac</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@400;500;600;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+:root {
+  --terra:        #A03A18;
+  --terra-hover:  #7D2C10;
+  --terra-light:  #F5DDD0;
+  --terra-pale:   #FDF3ED;
+  --bg:           #FDF8F4;
+  --bg-soft:      #F2E8DF;
+  --bg-sidebar:   #1C0F08;
+  --text:         #1C1008;
+  --text-body:    #2E1A0E;
+  --text-muted:   #7A5C48;
+  --border:       #E8D5C4;
+  --border-strong:#C9A882;
+  --danger:       #9B2226;
+  --danger-bg:    #FEF2F2;
+  --font-display: 'Lora', serif;
+  --font-ui:      'Montserrat', sans-serif;
+  --font-mono:    'DM Mono', monospace;
+  --radius-sm:    6px;
+  --radius-md:    10px;
+  --radius-pill:  24px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-ui);
+  background: var(--bg);
+  min-height: 100vh;
+  display: flex;
+  -webkit-font-smoothing: antialiased;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+}
+
+/* ── LEFT PANEL ── */
+.auth-left {
+  flex: 1;
+  background: var(--bg-sidebar);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 56px 64px;
+  position: relative;
+  overflow: hidden;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E"),
+    linear-gradient(160deg, #1C0F08 0%, #2A1208 100%);
+}
+
+/* decorative circle */
+.auth-left::before {
+  content: '';
+  position: absolute;
+  bottom: -120px;
+  right: -120px;
+  width: 380px;
+  height: 380px;
+  border-radius: 50%;
+  border: 60px solid rgba(160,58,24,.12);
+  pointer-events: none;
+}
+.auth-left::after {
+  content: '';
+  position: absolute;
+  top: -80px;
+  left: -80px;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  border: 40px solid rgba(160,58,24,.08);
+  pointer-events: none;
+}
+
+/* Brand */
+.auth-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  position: relative;
+  z-index: 1;
+}
+.auth-brand-icon-wrap {
+  width: 42px;
+  height: 42px;
+  background: var(--terra);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.auth-brand-icon-wrap i { font-size: 18px; color: #fff; }
+.auth-brand-name {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.1;
+}
+.auth-brand-sub {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: rgba(253,248,244,.4);
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+
+/* Hero */
+.auth-hero {
+  position: relative;
+  z-index: 1;
+}
+.auth-hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(34px, 3.5vw, 50px);
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.15;
+  margin-bottom: 22px;
+}
+.auth-hero h1 em {
+  font-style: italic;
+  color: var(--terra-light);
+}
+.auth-hero p {
+  font-family: var(--font-ui);
+  font-size: 14.5px;
+  color: rgba(253,248,244,.55);
+  line-height: 1.75;
+  max-width: 400px;
+}
+
+/* Features */
+.auth-features {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  position: relative;
+  z-index: 1;
+}
+.auth-feature {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: rgba(253,248,244,.6);
+}
+.auth-feature-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(160,58,24,.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.auth-feature-dot i { font-size: 13px; color: var(--terra-light); }
+
+/* ── RIGHT PANEL ── */
+.auth-right {
+  width: 460px;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 64px 56px;
+  border-left: 1px solid var(--border);
+}
+
+.auth-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--terra);
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+.auth-right h2 {
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 32px;
+  line-height: 1.2;
+}
+
+/* Form */
+.form-group { margin-bottom: 20px; }
+.form-label {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--text-muted);
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+.input-wrap { position: relative; }
+.input-wrap i {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: 15px;
+  pointer-events: none;
+}
+.form-control {
+  width: 100%;
+  padding: 13px 14px 13px 42px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  color: var(--text);
+  background: #fff;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+.form-control:focus {
+  border-color: var(--terra);
+  box-shadow: 0 0 0 4px rgba(160,58,24,.1);
+}
+.form-control::placeholder { color: var(--border-strong); }
+
+.btn-submit {
+  width: 100%;
+  padding: 14px;
+  background: var(--terra);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-ui);
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: .05em;
+  cursor: pointer;
+  transition: background .2s;
+  margin-top: 10px;
+}
+.btn-submit:hover { background: var(--terra-hover); }
+
+/* Alert */
+.alert-error {
+  background: var(--danger-bg);
+  color: var(--danger);
+  border-left: 4px solid var(--danger);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  font-size: 13px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--font-ui);
+}
+
+/* Divider */
+.hl-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 28px 0;
+}
+
+/* Footer */
+.auth-footer {
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--text-muted);
+  letter-spacing: .04em;
+}
+.auth-footer a {
+  color: var(--terra);
+  text-decoration: none;
+  font-weight: 500;
+}
+.auth-footer a:hover { text-decoration: underline; }
+
+/* Animations */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.auth-right > * {
+  animation: fadeUp .4s ease both;
+}
+.auth-right > *:nth-child(1) { animation-delay: .05s; }
+.auth-right > *:nth-child(2) { animation-delay: .10s; }
+.auth-right > *:nth-child(3) { animation-delay: .15s; }
+.auth-right > *:nth-child(4) { animation-delay: .20s; }
+.auth-right > *:nth-child(5) { animation-delay: .25s; }
+
+/* Mobile */
+@media (max-width: 768px) {
+  .auth-left  { display: none; }
+  .auth-right { width: 100%; padding: 44px 28px; border-left: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- LEFT -->
+<div class="auth-left">
+  <div class="auth-brand">
+    <div class="auth-brand-icon-wrap">
+      <i class="bi bi-journal-bookmark-fill"></i>
+    </div>
+    <div>
+      <div class="auth-brand-name">BiblioFac</div>
+      <div class="auth-brand-sub">Bibliothèque Faculté</div>
+    </div>
+  </div>
+
+  <div class="auth-hero">
+    <h1>Le savoir<br><em>commence ici.</em></h1>
+    <p>Accès à des milliers de ressources académiques — livres, revues et documents spécialisés pour vos études et recherches.</p>
+  </div>
+
+  <div class="auth-features">
+    <div class="auth-feature">
+      <div class="auth-feature-dot"><i class="bi bi-journal-bookmark-fill"></i></div>
+      Catalogue complet de livres et revues
+    </div>
+    <div class="auth-feature">
+      <div class="auth-feature-dot"><i class="bi bi-arrow-left-right"></i></div>
+      Gestion des prêts en temps réel
+    </div>
+    <div class="auth-feature">
+      <div class="auth-feature-dot"><i class="bi bi-bar-chart-fill"></i></div>
+      Rapports et statistiques détaillés
+    </div>
+    <div class="auth-feature">
+      <div class="auth-feature-dot"><i class="bi bi-shield-check"></i></div>
+      Accès sécurisé par rôle
+    </div>
+  </div>
+</div>
+
+<!-- RIGHT -->
+<div class="auth-right">
+  <div class="auth-eyebrow">Espace personnel</div>
+  <h2>Bon retour.</h2>
+
+  {% if error %}
+  <div class="alert-error">
+    <i class="bi bi-exclamation-circle"></i>
+    {{ error.messageKey|trans(error.messageData, 'security') }}
+  </div>
+  {% endif %}
+
+  <form action="{{ path('login') }}" method="post">
+    <div class="form-group">
+      <label class="form-label">Identifiant</label>
+      <div class="input-wrap">
+        <i class="bi bi-person"></i>
+        <input type="text" name="_username" value="{{ last_username }}"
+               class="form-control" placeholder="Votre nom d'utilisateur"
+               required autofocus>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Mot de passe</label>
+      <div class="input-wrap">
+        <i class="bi bi-lock"></i>
+        <input type="password" name="_password"
+               class="form-control" placeholder="••••••••" required>
+      </div>
+    </div>
+    <button type="submit" class="btn-submit">Se connecter</button>
+  </form>
+
+  <div class="hl-divider"></div>
+  <div class="auth-footer">
+    Pas encore de compte ?
+    <a href="{{ path('app_register') }}">Créer un compte</a>
+  </div>
+</div>
+
+</body>
+</html>

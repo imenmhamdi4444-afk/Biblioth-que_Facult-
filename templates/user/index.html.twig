@@ -1,0 +1,133 @@
+{% extends 'base.html.twig' %}
+{% block title %}Gestion des utilisateurs{% endblock %}
+{% block body %}
+
+<div class="page-header fade-up">
+    <div>
+        <div class="page-eyebrow">Administration</div>
+        <h2>Gestion des utilisateurs</h2>
+    </div>
+</div>
+
+<div class="table-wrapper fade-up">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Utilisateur</th>
+                <th>Email</th>
+                <th>Profil étudiant</th>
+                <th>Rôle</th>
+                <th class="text-end">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
+            {% set isCurrentUser = app.user.id == user.id %}
+            {% set isAdmin = 'ROLE_ADMIN' in user.roles %}
+            <tr>
+                <td>
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <div style="width:36px;height:36px;background:{% if isAdmin %}var(--gold-light){% else %}var(--bg-soft){% endif %};border-radius:50%;display:flex;align-items:center;justify-content:center;color:{% if isAdmin %}var(--gold){% else %}var(--text-muted){% endif %};font-family:var(--font-display);font-weight:700;font-size:14px;flex-shrink:0;border:2px solid {% if isAdmin %}var(--gold){% else %}var(--border){% endif %};">
+                            {{ user.username|first|upper }}
+                        </div>
+                        <div>
+                            <div style="font-weight:600;color:var(--text);">
+                                {{ user.username }}
+                                {% if isCurrentUser %}
+                                    <span style="font-family:var(--font-mono);font-size:10px;background:var(--gold-light);color:var(--gold-hover);padding:2px 8px;border-radius:2px;margin-left:6px;">Vous</span>
+                                {% endif %}
+                            </div>
+                            {% if user.firstName or user.lastName %}
+                            <div style="font-size:12px;color:var(--text-muted);">{{ user.firstName }} {{ user.lastName }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </td>
+                <td style="font-family:var(--font-mono);font-size:12px;color:var(--text-muted);">{{ user.email }}</td>
+                <td>
+                    {% if user.student %}
+                        <div style="font-size:13px;font-weight:500;color:var(--text);">{{ user.student.name }} {{ user.student.surname|upper }}</div>
+                        {% if user.student.matricule %}
+                        <div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">{{ user.student.matricule }}</div>
+                        {% endif %}
+                    {% else %}
+                        <span style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">—</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if isAdmin %}
+                        <span style="display:inline-flex;align-items:center;gap:5px;background:var(--gold-light);color:var(--gold-hover);border:1px solid rgba(184,150,12,.3);border-radius:2px;padding:4px 10px;font-family:var(--font-mono);font-size:11px;font-weight:600;">
+                            <i class="bi bi-shield-fill-check"></i> Administrateur
+                        </span>
+                    {% else %}
+                        <span style="display:inline-flex;align-items:center;gap:5px;background:var(--bg-soft);color:var(--text-muted);border:1px solid var(--border);border-radius:2px;padding:4px 10px;font-family:var(--font-mono);font-size:11px;">
+                            <i class="bi bi-person-fill"></i> Utilisateur
+                        </span>
+                    {% endif %}
+                </td>
+                <td class="text-end">
+                    <div style="display:flex;gap:6px;justify-content:flex-end;">
+
+                        {# Toggle role button #}
+                        {% if not isCurrentUser %}
+                        <form method="post" action="{{ path('app_user_toggle_role', {'id': user.id}) }}"
+                              onsubmit="return confirm('{% if isAdmin %}Rétrograder {{ user.username }} en Utilisateur ?{% else %}Promouvoir {{ user.username }} en Administrateur ?{% endif %}')">
+                            <input type="hidden" name="_token" value="{{ csrf_token('toggle-role' ~ user.id) }}">
+                            <button type="submit" class="btn btn-sm"
+                                    style="{% if isAdmin %}border:1px solid var(--border-strong);color:var(--text-muted);background:#fff;{% else %}background:var(--gold);color:#fff;border:none;{% endif %}border-radius:3px;font-family:var(--font-mono);font-size:11px;padding:5px 12px;">
+                                {% if isAdmin %}
+                                    <i class="bi bi-arrow-down-circle"></i> Rétrograder
+                                {% else %}
+                                    <i class="bi bi-shield-fill-plus"></i> Promouvoir admin
+                                {% endif %}
+                            </button>
+                        </form>
+                        {% endif %}
+
+                        {# Delete button #}
+                        {% if not isCurrentUser %}
+                        <form method="post" action="{{ path('app_user_delete', {'id': user.id}) }}"
+                              onsubmit="return confirm('Supprimer le compte de {{ user.username }} ? Cette action est irréversible.')">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete-user' ~ user.id) }}">
+                            <button type="submit" class="btn btn-sm btn-danger" style="font-family:var(--font-mono);font-size:11px;padding:5px 12px;">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                        {% else %}
+                        <span style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);padding:5px 8px;">Compte actif</span>
+                        {% endif %}
+
+                    </div>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">
+                    <div class="empty-state">
+                        <i class="bi bi-people"></i>
+                        <p>Aucun utilisateur enregistré.</p>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{# Summary stats #}
+<div style="display:flex;gap:16px;margin-top:20px;" class="fade-up">
+    <div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">
+        <i class="bi bi-people-fill me-1" style="color:var(--gold)"></i>
+        {{ users|length }} compte(s) au total
+    </div>
+    <div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">
+        <i class="bi bi-shield-fill-check me-1" style="color:var(--gold)"></i>
+        {{ users|filter(u => 'ROLE_ADMIN' in u.roles)|length }} administrateur(s)
+    </div>
+    <div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">
+        <i class="bi bi-person-fill me-1"></i>
+        {{ users|filter(u => 'ROLE_ADMIN' not in u.roles)|length }} utilisateur(s)
+    </div>
+</div>
+
+{% endblock %}

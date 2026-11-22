@@ -1,0 +1,30 @@
+{{ form_start(form, {'attr': {'class': 'row g-3'}}) }}
+    <div class="mb-3">
+        {{ form_label(form.dateBorrowed) }}
+        {{ form_widget(form.dateBorrowed, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.dateBorrowed) }}
+    </div>
+    <div class="mb-3">
+        {{ form_label(form.student) }}
+        {{ form_widget(form.student, {'attr': {'class': 'form-select'}}) }}
+        {{ form_errors(form.student) }}
+    </div>
+    <div class="mb-3">
+        {{ form_label(form.book) }}
+        {{ form_widget(form.book, {'attr': {'class': 'form-select'}}) }}
+        {{ form_errors(form.book) }}
+        <small class="text-muted">Sélectionnez un livre OU une revue, pas les deux.</small>
+    </div>
+    <div class="mb-3">
+        {{ form_label(form.revue) }}
+        {{ form_widget(form.revue, {'attr': {'class': 'form-select'}}) }}
+        {{ form_errors(form.revue) }}
+    </div>
+    <div class="mb-3">
+        <div class="form-check">
+            {{ form_widget(form.bookReturned, {'attr': {'class': 'form-check-input'}}) }}
+            {{ form_label(form.bookReturned, null, {'label_attr': {'class': 'form-check-label'}}) }}
+        </div>
+    </div>
+    <button class="btn btn-primary">{{ button_label|default('Enregistrer') }}</button>
+{{ form_end(form) }}

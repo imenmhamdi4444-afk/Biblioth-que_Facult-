@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+{% block title %}Modifier — {{ author.name }} {{ author.surname }}{% endblock %}
+{% block body %}
+<div class="page-header fade-up">
+    <div><div class="page-eyebrow">Auteurs / Modifier</div><h2>{{ author.name }} {{ author.surname }}</h2></div>
+    <a href="{{ path('app_author_index') }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Retour</a>
+</div>
+<div class="row justify-content-center fade-up">
+    <div class="col-md-8">
+        <div class="card mb-3"><div class="card-body">{{ include('author/_form.html.twig') }}</div></div>
+        <div class="card" style="border-color:#FCA5A5;">
+            <div class="card-header" style="color:#9B2226;background:#FEF2F2;">Zone de danger</div>
+            <div class="card-body">
+                <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">La suppression d'un auteur est definitive.</p>
+                <form method="post" action="{{ path('app_author_delete', {'id': author.id}) }}" onsubmit="return confirm('Supprimer cet auteur ?')">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ author.id) }}">
+                    <button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i> Supprimer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

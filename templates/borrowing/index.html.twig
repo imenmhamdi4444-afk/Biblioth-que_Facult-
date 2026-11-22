@@ -1,0 +1,58 @@
+﻿{% extends 'base.html.twig' %}
+{% block title %}Prets{% endblock %}
+{% block body %}
+<div class="page-header fade-up">
+  <div><div class="page-eyebrow">Gestion</div><h2>Prets</h2></div>
+  {% if is_granted('ROLE_USER') %}
+  <a href="{{ path('app_borrowing_new') }}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Nouveau pret</a>
+  {% endif %}
+</div>
+<div class="table-wrapper fade-up">
+  <table class="table">
+    <thead><tr>
+      <th>Date pret</th><th>Type</th><th>Document</th><th>Etudiant</th>
+      <th>Date limite</th><th>Retourne le</th><th>Statut</th><th class="text-end">Actions</th>
+    </tr></thead>
+    <tbody>
+    {% for borrowing in borrowings %}
+      {% set isLate = not borrowing.bookReturned and borrowing.dateDue and date() > borrowing.dateDue %}
+      <tr>
+        <td style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">{{ borrowing.dateBorrowed ? borrowing.dateBorrowed|date('d/m/Y') : '—' }}</td>
+        <td>{% if borrowing.book %}<span class="badge bg-primary">Livre</span>{% elseif borrowing.revue %}<span class="badge bg-info">Revue</span>{% endif %}</td>
+        <td><div style="font-family:var(--font-display);font-weight:600;color:var(--text);font-size:14px;">{% if borrowing.book %}{{ borrowing.book.title }}{% elseif borrowing.revue %}{{ borrowing.revue.title }}{% else %}—{% endif %}</div></td>
+        <td>
+          <div style="font-weight:500;color:var(--text);">{{ borrowing.student.name }} {{ borrowing.student.surname }}</div>
+          {% if borrowing.student.matricule %}<div style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);">{{ borrowing.student.matricule }}</div>{% endif %}
+        </td>
+        <td style="font-family:var(--font-mono);font-size:11px;{% if isLate %}color:#9B2226;font-weight:600;{% else %}color:var(--text-muted);{% endif %}">
+          {{ borrowing.dateDue ? borrowing.dateDue|date('d/m/Y') : '—' }}
+          {% if isLate %} <i class="bi bi-exclamation-triangle-fill"></i>{% endif %}
+        </td>
+        <td style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">{{ borrowing.dateReturned ? borrowing.dateReturned|date('d/m/Y') : '—' }}</td>
+        <td>
+          {% if borrowing.bookReturned %}<span class="badge bg-success">Retourne</span>
+          {% elseif isLate %}<span class="badge bg-danger">En retard</span>
+          {% else %}<span class="badge bg-warning">En cours</span>{% endif %}
+        </td>
+        <td class="text-end">
+          <div class="d-flex gap-1 justify-content-end">
+            <a href="{{ path('app_borrowing_show', {'id': borrowing.id}) }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-eye"></i></a>
+            {% if is_granted('ROLE_USER') and not borrowing.bookReturned %}
+            <form method="post" action="{{ path('app_borrowing_return', {'id': borrowing.id}) }}" class="d-inline" onsubmit="return confirm('Confirmer le retour ?')">
+              <input type="hidden" name="_token" value="{{ csrf_token('return' ~ borrowing.id) }}">
+              <button type="submit" class="btn btn-outline-success btn-sm"><i class="bi bi-check-circle"></i></button>
+            </form>
+            {% endif %}
+            {% if is_granted('ROLE_ADMIN') %}
+            <a href="{{ path('app_borrowing_edit', {'id': borrowing.id}) }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-pencil"></i></a>
+            {% endif %}
+          </div>
+        </td>
+      </tr>
+    {% else %}
+    <tr><td colspan="8"><div class="empty-state"><i class="bi bi-inbox"></i><p>Aucun pret enregistre.</p></div></td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

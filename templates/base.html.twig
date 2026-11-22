@@ -1,0 +1,870 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}BiblioFac{% endblock %} — Bibliothèque Faculté</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Montserrat:wght@400;500;600;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+/* ═══════════════════════════════════════════
+   TERRACOTTA & INK — BiblioFac Design System
+   ═══════════════════════════════════════════ */
+:root {
+  /* Core Palette */
+  --terra:       #D4622A;
+  --terra-deep:  #B54E1F;
+  --terra-light: #F5DDD0;
+  --terra-pale:  #FDF3ED;
+  --saddle:      #8B4513;
+  --saddle-light:#C47A3A;
+
+  /* Backgrounds */
+  --bg:          #FDF8F4;
+  --bg-soft:     #F2E8DF;
+  --bg-sidebar:  #1C0F08;
+  --bg-sidebar-2:#251508;
+
+  /* Text */
+  --text:        #1C1008;
+  --text-body:   #2E1A0E;
+  --text-muted:  #7A5C48;
+  --text-inverse:#FDF8F4;
+
+  /* Borders */
+  --border:      #E8D5C4;
+  --border-strong:#C9A882;
+
+  /* Semantic */
+  --success:     #2D6A4F;
+  --success-bg:  #D8F3DC;
+  --danger:      #9B2226;
+  --danger-bg:   #FFE8E8;
+  --warning:     #7D5A00;
+  --warning-bg:  #FFF3CD;
+
+  /* Typography */
+  --font-display: 'Lora', serif;
+  --font-ui:      'Montserrat', sans-serif;
+  --font-mono:    'DM Mono', monospace;
+
+  /* Layout */
+  --sidebar-w:   220px;
+  --topbar-h:    72px;
+  --radius-sm:   6px;
+  --radius-md:   10px;
+  --radius-lg:   16px;
+  --radius-pill: 24px;
+
+  /* Shadows — warm tinted */
+  --shadow-sm:   0 2px 8px rgba(139,69,19,.08);
+  --shadow-md:   0 6px 24px rgba(139,69,19,.12);
+  --shadow-lg:   0 16px 48px rgba(139,69,19,.16);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-ui);
+  background: var(--bg);
+  color: var(--text-body);
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  font-weight: 500;
+  /* subtle warm noise texture */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+}
+
+a { color: inherit; text-decoration: none; }
+
+/* ═══ TOPBAR ═══ */
+.hl-topbar {
+  background: var(--bg);
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+.hl-topbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 48px;
+  height: var(--topbar-h);
+  gap: 24px;
+}
+
+/* Brand */
+.hl-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+  color: inherit;
+  flex-shrink: 0;
+}
+.hl-brand-icon-wrap {
+  width: 40px;
+  height: 40px;
+  background: #A03A18;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(160,58,24,.3);
+  flex-shrink: 0;
+}
+.hl-brand-icon-wrap i { font-size: 18px; color: #fff; }
+.hl-brand-name {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.1;
+}
+.hl-brand-sub {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-muted);
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+
+/* Top Nav */
+.hl-topnav { display: flex; align-items: center; gap: 2px; }
+.hl-topnav-link {
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-decoration: none;
+  padding: 7px 14px;
+  border-radius: var(--radius-pill);
+  letter-spacing: .04em;
+  transition: all .2s;
+}
+.hl-topnav-link:hover {
+  color: var(--terra);
+  background: var(--terra-pale);
+}
+.hl-topnav-link.active {
+  color: var(--terra);
+  background: var(--terra-light);
+  font-weight: 700;
+}
+
+/* Topbar Right */
+.hl-topbar-right { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+.hl-topbar-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-pill);
+  padding: 8px 16px;
+  background: var(--bg-soft);
+  transition: all .2s;
+}
+.hl-topbar-search:focus-within {
+  border-color: var(--terra);
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(212,98,42,.1);
+}
+.hl-topbar-search i { color: var(--text-muted); font-size: 13px; }
+.hl-topbar-search input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--text);
+  width: 150px;
+}
+.hl-topbar-search input::placeholder { color: var(--text-muted); }
+
+.hl-btn-login {
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  font-weight: 700;
+  background: #A03A18;
+  color: #fff;
+  padding: 9px 22px;
+  border-radius: var(--radius-pill);
+  text-decoration: none;
+  letter-spacing: .04em;
+  transition: all .2s;
+  box-shadow: none;
+}
+.hl-btn-login:hover {
+  background: #7D2C10;
+  color: #fff;
+}
+
+.hl-user-pill {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--text-body);
+  text-decoration: none;
+  border: 1.5px solid var(--border);
+  padding: 7px 16px;
+  border-radius: var(--radius-pill);
+  transition: all .2s;
+  background: var(--bg);
+}
+.hl-user-pill:hover {
+  border-color: var(--terra);
+  color: var(--terra);
+  background: var(--terra-pale);
+}
+.hl-user-pill i { font-size: 15px; }
+
+.hl-btn-logout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--border);
+  color: var(--text-muted);
+  transition: all .2s;
+  font-size: 15px;
+}
+.hl-btn-logout:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+  background: var(--danger-bg);
+}
+
+/* Topbar rule */
+.hl-topbar-rule {
+  height: 3px;
+  background: #A03A18;
+}
+
+/* ═══ LAYOUT ═══ */
+.hl-layout { display: flex; min-height: calc(100vh - var(--topbar-h)); }
+
+/* ═══ SIDEBAR ═══ */
+#sidebar {
+  width: var(--sidebar-w);
+  background: var(--bg-sidebar);
+  flex-shrink: 0;
+  padding: 28px 0 40px;
+  position: sticky;
+  top: var(--topbar-h);
+  height: calc(100vh - var(--topbar-h));
+  overflow-y: auto;
+  /* warm texture overlay */
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"),
+    linear-gradient(180deg, var(--bg-sidebar) 0%, var(--bg-sidebar-2) 100%);
+}
+#sidebar::-webkit-scrollbar { width: 4px; }
+#sidebar::-webkit-scrollbar-track { background: transparent; }
+#sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 4px; }
+
+.nav-section-label {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  color: rgba(253,248,244,.35);
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  padding: 20px 22px 7px;
+  font-weight: 500;
+}
+
+.nav-link-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 22px;
+  color: rgba(253,248,244,.65);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  border-left: 3px solid transparent;
+  transition: all .2s;
+  margin: 1px 0;
+}
+.nav-link-item i {
+  font-size: 15px;
+  width: 18px;
+  text-align: center;
+  flex-shrink: 0;
+  opacity: .75;
+  transition: opacity .2s;
+}
+.nav-link-item:hover {
+  color: #fff;
+  border-left-color: var(--terra);
+  background: rgba(212,98,42,.12);
+}
+.nav-link-item:hover i { opacity: 1; }
+.nav-link-item.active {
+  color: #fff;
+  border-left-color: var(--terra);
+  background: rgba(212,98,42,.2);
+  font-weight: 600;
+}
+.nav-link-item.active i { opacity: 1; color: var(--terra-light); }
+
+.sidebar-divider {
+  height: 1px;
+  background: rgba(255,255,255,.07);
+  margin: 10px 22px;
+}
+
+/* ═══ MAIN ═══ */
+#main-content { flex: 1; min-width: 0; background: transparent; }
+
+.page-body { padding: 48px 56px; }
+
+/* ═══ PAGE HEADER ═══ */
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 36px;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--border);
+}
+.page-header h2 {
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+  line-height: 1.2;
+}
+.page-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--terra);
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  margin-bottom: 7px;
+  font-weight: 500;
+}
+
+/* ═══ CARDS ═══ */
+.hl-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 32px 28px;
+  transition: all .25s;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+.hl-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: #A03A18;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+.hl-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-strong);
+}
+
+.card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-body);
+  box-shadow: var(--shadow-sm);
+}
+.card-header {
+  background: var(--bg-soft);
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--text);
+  padding: .95rem 1.4rem;
+  letter-spacing: .02em;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+.card-body { padding: 1.6rem; }
+
+/* ═══ TABLES ═══ */
+.table-wrapper {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  background: #fff;
+}
+.table { color: var(--text-body); margin: 0; }
+.table thead th {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-bottom: 2px solid var(--border);
+  background: var(--bg-soft);
+  padding: .95rem 1.4rem;
+  white-space: nowrap;
+  font-weight: 500;
+}
+.table tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: background .12s;
+}
+.table tbody tr:last-child { border-bottom: none; }
+.table tbody tr:hover { background: var(--terra-pale); }
+.table td {
+  padding: .95rem 1.4rem;
+  vertical-align: middle;
+  font-size: .925rem;
+  color: var(--text-body);
+}
+
+/* ═══ BUTTONS ═══ */
+.btn {
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: 12.5px;
+  letter-spacing: .03em;
+  border-radius: var(--radius-pill);
+  transition: all .2s;
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+}
+.btn-primary {
+  background: #A03A18;
+  border-color: #A03A18;
+  color: #fff;
+  box-shadow: none;
+}
+.btn-primary:hover {
+  background: #7D2C10;
+  border-color: #7D2C10;
+  color: #fff;
+}
+.btn-outline-secondary {
+  border: 1.5px solid var(--border-strong);
+  color: var(--text-muted);
+  background: transparent;
+}
+.btn-outline-secondary:hover {
+  background: var(--bg-soft);
+  border-color: var(--border-strong);
+  color: var(--text);
+}
+.btn-danger { background: var(--danger); border-color: var(--danger); color: #fff; }
+.btn-outline-danger { border: 1.5px solid var(--danger); color: var(--danger); background: transparent; }
+.btn-outline-danger:hover { background: var(--danger); color: #fff; }
+.btn-success { background: var(--success); border-color: var(--success); color: #fff; }
+.btn-outline-success { border: 1.5px solid var(--success); color: var(--success); background: transparent; }
+.btn-outline-success:hover { background: var(--success); color: #fff; }
+.btn-sm { padding: .35rem .9rem; font-size: 11.5px; }
+.btn-lg { padding: .85rem 2rem; font-size: 14.5px; }
+
+/* ═══ FORMS ═══ */
+.form-control, .form-select {
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-ui);
+  font-size: 13.5px;
+  color: var(--text);
+  padding: .65rem 1rem;
+  background: #fff;
+  transition: border-color .15s, box-shadow .15s;
+}
+.form-control:focus, .form-select:focus {
+  border-color: var(--terra);
+  box-shadow: 0 0 0 4px rgba(212,98,42,.1);
+  outline: none;
+}
+.form-control::placeholder { color: var(--text-muted); }
+.form-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  margin-bottom: .45rem;
+  display: block;
+}
+
+/* ═══ ALERTS ═══ */
+.alert {
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: .875rem;
+  font-weight: 500;
+  padding: 1rem 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+  font-family: var(--font-ui);
+}
+.alert-success  { background: var(--success-bg); color: var(--success); border-left: 4px solid var(--success); }
+.alert-danger   { background: var(--danger-bg);  color: var(--danger);  border-left: 4px solid var(--danger); }
+.alert-warning  { background: var(--warning-bg); color: var(--warning); border-left: 4px solid #F59E0B; }
+.alert-info     { background: var(--terra-pale); color: var(--terra-deep); border-left: 4px solid var(--terra); }
+.btn-close { margin-left: auto; }
+
+/* ═══ BADGES ═══ */
+.badge {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: .72rem;
+  padding: .32em .75em;
+  border-radius: var(--radius-pill);
+  letter-spacing: .04em;
+}
+.badge.bg-primary  { background: var(--terra) !important; color: #fff; }
+.badge.bg-success  { background: var(--success) !important; color: #fff; }
+.badge.bg-danger   { background: var(--danger) !important; color: #fff; }
+.badge.bg-warning  { background: #D97706 !important; color: #fff !important; }
+.badge.bg-info     { background: #0369A1 !important; color: #fff; }
+.badge.bg-secondary{ background: var(--text-muted) !important; color: #fff; }
+
+.badge-keyword {
+  display: inline-block;
+  background: var(--terra-pale);
+  color: var(--terra-deep);
+  border: 1px solid rgba(212,98,42,.25);
+  border-radius: var(--radius-pill);
+  padding: .25rem .75rem;
+  font-family: var(--font-mono);
+  font-size: .74rem;
+  margin: .1rem;
+  font-weight: 500;
+}
+
+/* ═══ CODE ═══ */
+code {
+  background: var(--terra-pale);
+  color: var(--terra-deep);
+  padding: .18rem .5rem;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: .8rem;
+}
+
+/* ═══ STAT CARDS ═══ */
+.stat-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 28px 32px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  transition: all .22s;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+.stat-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: #A03A18;
+}
+.stat-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-3px);
+  border-color: var(--border-strong);
+}
+.stat-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+  background: var(--terra-pale);
+  color: #A03A18;
+  box-shadow: none;
+}
+.stat-value {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+}
+.stat-label {
+  font-family: var(--font-mono);
+  font-size: .73rem;
+  color: var(--text-muted);
+  margin-top: .3rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+/* ═══ SEARCH BAR ═══ */
+.search-bar { position: relative; }
+.search-bar i {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+  font-size: .9rem;
+}
+.search-bar .form-control { padding-left: 2.6rem; border-radius: var(--radius-pill); }
+
+/* ═══ EMPTY STATE ═══ */
+.empty-state {
+  text-align: center;
+  padding: 72px 32px;
+  color: var(--text-muted);
+}
+.empty-state i {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  display: block;
+  color: var(--border-strong);
+}
+.empty-state p { font-size: .95rem; margin: 0; font-family: var(--font-ui); }
+
+/* ═══ DIVIDER ═══ */
+.hl-divider { height: 1px; background: var(--border); margin: 36px 0; }
+
+/* ═══ FLASH WRAPPER ═══ */
+.flash-wrapper { padding: 20px 56px 0; }
+
+/* ═══ ANIMATIONS ═══ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fadeUp .4s ease both; }
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.slide-in { animation: slideInLeft .35s ease both; }
+
+/* staggered children */
+.fade-up-children > * { animation: fadeUp .4s ease both; }
+.fade-up-children > *:nth-child(1) { animation-delay: .05s; }
+.fade-up-children > *:nth-child(2) { animation-delay: .10s; }
+.fade-up-children > *:nth-child(3) { animation-delay: .15s; }
+.fade-up-children > *:nth-child(4) { animation-delay: .20s; }
+
+/* ═══ SCROLLBAR (main) ═══ */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-soft); }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { background: var(--terra); }
+
+/* ═══ MOBILE ═══ */
+@media (max-width: 768px) {
+  .hl-topbar-inner { padding: 0 20px; }
+  .hl-topnav { display: none; }
+  .hl-topbar-search { display: none; }
+  #sidebar { display: none; }
+  .page-body { padding: 28px 20px; }
+  .flash-wrapper { padding: 16px 20px 0; }
+}
+</style>
+</head>
+<body>
+
+{# ═══ TOPBAR ═══ #}
+<header class="hl-topbar">
+  <div class="hl-topbar-inner">
+
+    <a href="{{ path('app_home') }}" class="hl-brand">
+      <div class="hl-brand-icon-wrap">
+        <i class="bi bi-journal-bookmark-fill"></i>
+      </div>
+      <div>
+        <div class="hl-brand-name">BiblioFac</div>
+        <div class="hl-brand-sub">Bibliothèque Faculté</div>
+      </div>
+    </a>
+
+    <nav class="hl-topnav">
+      <a href="{{ path('app_home') }}"
+         class="hl-topnav-link {% if app.request.attributes.get('_route') == 'app_home' %}active{% endif %}">
+        Accueil
+      </a>
+      <a href="{{ path('app_book_index') }}"
+         class="hl-topnav-link {% if app.request.attributes.get('_route') starts with 'app_book' %}active{% endif %}">
+        Livres
+      </a>
+      <a href="{{ path('app_revue_index') }}"
+         class="hl-topnav-link {% if app.request.attributes.get('_route') starts with 'app_revue' %}active{% endif %}">
+        Revues
+      </a>
+      <a href="{{ path('app_author_index') }}"
+         class="hl-topnav-link {% if app.request.attributes.get('_route') starts with 'app_author' %}active{% endif %}">
+        Auteurs
+      </a>
+      <a href="{{ path('app_borrowing_index') }}"
+         class="hl-topnav-link {% if app.request.attributes.get('_route') starts with 'app_borrowing' %}active{% endif %}">
+        Prêts
+      </a>
+      <a href="{{ path('app_search') }}"
+         class="hl-topnav-link {% if app.request.attributes.get('_route') == 'app_search' %}active{% endif %}">
+        Recherche
+      </a>
+      {% if is_granted('ROLE_ADMIN') %}
+      <a href="{{ path('admin_dashboard') }}"
+         class="hl-topnav-link {% if app.request.attributes.get('_route') == 'admin_dashboard' %}active{% endif %}">
+        Admin
+      </a>
+      {% endif %}
+    </nav>
+
+    <div class="hl-topbar-right">
+      <form class="hl-topbar-search" action="{{ path('app_search') }}" method="GET">
+        <i class="bi bi-search"></i>
+        <input type="text" name="q" placeholder="Rechercher...">
+      </form>
+
+      {% if app.user %}
+        <a href="{{ path('app_profile') }}" class="hl-user-pill">
+          <i class="bi bi-person-circle"></i>
+          <span>{{ app.user.username|capitalize }}</span>
+        </a>
+        <a href="{{ path('app_logout') }}" class="hl-btn-logout" title="Se déconnecter">
+          <i class="bi bi-box-arrow-left"></i>
+        </a>
+      {% else %}
+        <a href="{{ path('login') }}" class="hl-btn-login">Connexion</a>
+      {% endif %}
+    </div>
+
+  </div>
+  <div class="hl-topbar-rule"></div>
+</header>
+
+{# ═══ LAYOUT ═══ #}
+<div class="hl-layout">
+
+  {# ═══ SIDEBAR ═══ #}
+  <aside id="sidebar">
+
+    <div class="nav-section-label">Documents</div>
+    <a href="{{ path('app_search') }}"
+       class="nav-link-item {% if app.request.attributes.get('_route') == 'app_search' %}active{% endif %}">
+      <i class="bi bi-search"></i> Recherche
+    </a>
+    <a href="{{ path('app_book_index') }}"
+       class="nav-link-item {% if app.request.attributes.get('_route') starts with 'app_book' %}active{% endif %}">
+      <i class="bi bi-journal-bookmark-fill"></i> Livres
+    </a>
+    <a href="{{ path('app_revue_index') }}"
+       class="nav-link-item {% if app.request.attributes.get('_route') starts with 'app_revue' %}active{% endif %}">
+      <i class="bi bi-newspaper"></i> Revues
+    </a>
+
+    <div class="sidebar-divider"></div>
+    <div class="nav-section-label">Références</div>
+    <a href="{{ path('app_author_index') }}"
+       class="nav-link-item {% if app.request.attributes.get('_route') starts with 'app_author' %}active{% endif %}">
+      <i class="bi bi-person-lines-fill"></i> Auteurs
+    </a>
+    <a href="{{ path('app_publisher_index') }}"
+       class="nav-link-item {% if app.request.attributes.get('_route') starts with 'app_publisher' %}active{% endif %}">
+      <i class="bi bi-building"></i> Éditeurs
+    </a>
+
+    <div class="sidebar-divider"></div>
+    <div class="nav-section-label">Gestion</div>
+    <a href="{{ path('app_borrowing_index') }}"
+       class="nav-link-item {% if app.request.attributes.get('_route') starts with 'app_borrowing' %}active{% endif %}">
+      <i class="bi bi-arrow-left-right"></i> Prêts
+    </a>
+    <a href="{{ path('app_student_index') }}"
+       class="nav-link-item {% if app.request.attributes.get('_route') starts with 'app_student' %}active{% endif %}">
+      <i class="bi bi-people-fill"></i> Étudiants
+    </a>
+
+    {% if is_granted('ROLE_ADMIN') %}
+    <div class="sidebar-divider"></div>
+    <div class="nav-section-label">Administration</div>
+    <a href="{{ path('admin_dashboard') }}"
+       class="nav-link-item {% if app.request.attributes.get('_route') == 'admin_dashboard' %}active{% endif %}">
+      <i class="bi bi-speedometer2"></i> Tableau de bord
+    </a>
+    <a href="{{ path('most_popular_book') }}"
+       class="nav-link-item {% if app.request.attributes.get('_route') starts with 'most_popular' %}active{% endif %}">
+      <i class="bi bi-bar-chart-fill"></i> Statistiques
+    </a>
+    <a href="{{ path('borrowing_book') }}"
+       class="nav-link-item {% if app.request.attributes.get('_route') == 'borrowing_book' %}active{% endif %}">
+      <i class="bi bi-clock-history"></i> Historique
+    </a>
+    <a href="{{ path('app_user_index') }}"
+       class="nav-link-item {% if app.request.attributes.get('_route') starts with 'app_user' %}active{% endif %}">
+      <i class="bi bi-people-fill"></i> Utilisateurs
+    </a>
+    {% endif %}
+
+    {% if app.user %}
+    <div class="sidebar-divider"></div>
+    <div class="nav-section-label">Compte</div>
+    <a href="{{ path('app_profile') }}"
+       class="nav-link-item {% if app.request.attributes.get('_route') == 'app_profile' %}active{% endif %}">
+      <i class="bi bi-person-circle"></i> Mon Profil
+    </a>
+    {% endif %}
+
+  </aside>
+
+  {# ═══ MAIN ═══ #}
+  <main id="main-content">
+
+    {# Flash messages #}
+    <div class="flash-wrapper">
+      {% for label, messages in app.flashes %}
+        {% for message in messages %}
+          <div class="alert alert-{{ label == 'error' ? 'danger' : label }} alert-dismissible fade show mb-2" role="alert">
+            {% if label == 'success' %}<i class="bi bi-check-circle-fill"></i>{% endif %}
+            {% if label == 'danger' or label == 'error' %}<i class="bi bi-exclamation-triangle-fill"></i>{% endif %}
+            {% if label == 'info' %}<i class="bi bi-info-circle-fill"></i>{% endif %}
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+      {% endfor %}
+    </div>
+
+    <div class="page-body fade-up">
+      {% block body %}{% endblock %}
+    </div>
+
+  </main>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+{% block javascripts %}{% endblock %}
+</body>
+</html>

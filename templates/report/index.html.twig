@@ -1,0 +1,24 @@
+﻿{% extends 'base.html.twig' %}
+{% block title %}Statistiques{% endblock %}
+{% block body %}
+<div class="page-header fade-up">
+  <div><div class="page-eyebrow">Administration</div><h2>Livres les plus populaires</h2></div>
+  <a href="{{ path('most_popular_book_pdf') }}" class="btn btn-outline-danger"><i class="bi bi-file-pdf"></i> Telecharger PDF</a>
+</div>
+<div class="table-wrapper fade-up">
+  <table class="table">
+    <thead><tr><th>Rang</th><th>Titre du livre</th><th class="text-center">Nombre de prets</th></tr></thead>
+    <tbody>
+    {% for book in books %}
+    <tr>
+      <td style="font-family:var(--font-mono);font-size:12px;color:var(--text-muted);">#{{ loop.index }}</td>
+      <td><div style="font-family:var(--font-display);font-weight:600;color:var(--text);">{{ book.title }}</div></td>
+      <td class="text-center"><span class="badge bg-primary">{{ book.howMany }}</span></td>
+    </tr>
+    {% else %}
+    <tr><td colspan="3"><div class="empty-state"><i class="bi bi-bar-chart"></i><p>Aucune donnee disponible.</p></div></td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

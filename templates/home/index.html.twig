@@ -1,0 +1,110 @@
+﻿{% extends 'base.html.twig' %}
+{% block title %}Accueil{% endblock %}
+{% block body %}
+
+<div class="hl-hero fade-up">
+  <div class="hl-hero-eyebrow">Bibliotheque Universitaire</div>
+  <h1 class="hl-hero-title">Le savoir<br><em>commence ici.</em></h1>
+  <p class="hl-hero-sub">Acces a des milliers de ressources academiques — livres, revues et documents specialises pour vos etudes et recherches.</p>
+  <form class="hl-hero-search" action="{{ path('app_book_index') }}" method="GET">
+    <i class="bi bi-search"></i>
+    <input type="text" name="keyword" placeholder="Rechercher un livre, auteur, mot-cle...">
+    <button type="submit">Rechercher</button>
+  </form>
+  <div class="hl-hero-stats">
+    <div class="hl-stat">
+      <span class="hl-stat-num">{{ totalBooks ?? '—' }}</span>
+      <span class="hl-stat-label">Livres</span>
+    </div>
+    <div class="hl-stat-divider"></div>
+    <div class="hl-stat">
+      <span class="hl-stat-num">{{ totalRevues ?? '—' }}</span>
+      <span class="hl-stat-label">Revues</span>
+    </div>
+    <div class="hl-stat-divider"></div>
+    <div class="hl-stat">
+      <span class="hl-stat-num">{{ totalStudents ?? '—' }}</span>
+      <span class="hl-stat-label">Etudiants</span>
+    </div>
+  </div>
+</div>
+
+<div class="hl-cards">
+  <a href="{{ path('app_book_index') }}" class="hl-card fade-up" style="animation-delay:.05s">
+    <div class="hl-card-icon"><i class="bi bi-journal-bookmark-fill"></i></div>
+    <div class="hl-card-title">Catalogue Livres</div>
+    <div class="hl-card-action">Parcourir →</div>
+  </a>
+  <a href="{{ path('app_revue_index') }}" class="hl-card fade-up" style="animation-delay:.1s">
+    <div class="hl-card-icon"><i class="bi bi-newspaper"></i></div>
+    <div class="hl-card-title">Revues</div>
+    <div class="hl-card-action">Explorer →</div>
+  </a>
+  <a href="{{ path('app_borrowing_new') }}" class="hl-card fade-up" style="animation-delay:.15s">
+    <div class="hl-card-icon"><i class="bi bi-plus-circle-fill"></i></div>
+    <div class="hl-card-title">Nouveau Pret</div>
+    <div class="hl-card-action">Enregistrer →</div>
+  </a>
+  <a href="{{ path('app_profile') }}" class="hl-card fade-up" style="animation-delay:.2s">
+    <div class="hl-card-icon"><i class="bi bi-person-circle"></i></div>
+    <div class="hl-card-title">Mon Profil</div>
+    <div class="hl-card-action">Voir →</div>
+  </a>
+</div>
+
+{% if latestBooks|length > 0 %}
+<div style="padding:48px 56px 0;">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--border);">
+    <div>
+      <div style="font-family:var(--font-mono);font-size:10px;color:var(--gold);letter-spacing:.2em;text-transform:uppercase;margin-bottom:6px;">Nouvelles acquisitions</div>
+      <h2 style="font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--text);margin:0;">Derniers livres ajoutes</h2>
+    </div>
+    <a href="{{ path('app_book_index') }}" style="font-family:var(--font-mono);font-size:11px;color:var(--gold);letter-spacing:.08em;text-decoration:none;">Voir tout →</a>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px;padding-bottom:48px;">
+    {% for book in latestBooks %}
+    <a href="{{ path('app_book_show', {id: book.id}) }}" style="text-decoration:none;display:flex;flex-direction:column;border:1px solid var(--border);border-radius:3px;overflow:hidden;transition:all .25s;background:#fff;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,.08)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+      {% if book.image %}
+        <img src="{{ asset('uploads/covers/' ~ book.image) }}" alt="{{ book.title }}" style="width:100%;height:200px;object-fit:cover;">
+      {% else %}
+        <div style="height:200px;background:var(--bg-soft);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:2.5rem;border-bottom:1px solid var(--border);">
+          <i class="bi bi-book"></i>
+        </div>
+      {% endif %}
+      <div style="padding:16px 18px;flex:1;">
+        <div style="font-family:var(--font-mono);font-size:9px;color:var(--gold);letter-spacing:.15em;text-transform:uppercase;margin-bottom:8px;">Livre</div>
+        <div style="font-family:var(--font-display);font-size:15px;font-weight:600;color:var(--text);line-height:1.3;margin-bottom:6px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">{{ book.title }}</div>
+        <div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">{% for a in book.authors %}{{ a }}{% if not loop.last %}, {% endif %}{% else %}—{% endfor %}</div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<style>
+.hl-hero{background:var(--bg-soft);border-bottom:1px solid var(--border);padding:72px 56px 56px;}
+.hl-hero-eyebrow{font-family:var(--font-mono);font-size:11px;color:var(--gold);letter-spacing:.25em;text-transform:uppercase;margin-bottom:20px;}
+.hl-hero-title{font-family:var(--font-display);font-size:clamp(40px,5vw,64px);font-weight:700;color:var(--text);line-height:1.1;margin-bottom:20px;}
+.hl-hero-title em{font-style:italic;color:var(--gold);}
+.hl-hero-sub{font-family:var(--font-ui);font-size:16px;color:var(--text-muted);max-width:520px;line-height:1.7;margin-bottom:36px;}
+.hl-hero-search{display:flex;align-items:center;gap:12px;max-width:580px;background:#fff;border:2px solid var(--border-strong);border-radius:3px;padding:13px 18px;margin-bottom:40px;transition:border-color .2s,box-shadow .2s;}
+.hl-hero-search:focus-within{border-color:var(--gold);box-shadow:0 0 0 4px rgba(184,150,12,.1);}
+.hl-hero-search i{color:var(--text-muted);font-size:17px;}
+.hl-hero-search input{flex:1;border:none;outline:none;font-family:var(--font-ui);font-size:15px;color:var(--text);background:transparent;}
+.hl-hero-search input::placeholder{color:var(--text-muted);}
+.hl-hero-search button{background:var(--gold);color:#fff;border:none;padding:9px 22px;border-radius:2px;font-family:var(--font-ui);font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:background .2s;}
+.hl-hero-search button:hover{background:var(--gold-hover);}
+.hl-hero-stats{display:flex;align-items:center;gap:32px;}
+.hl-stat{display:flex;flex-direction:column;gap:3px;}
+.hl-stat-num{font-family:var(--font-display);font-size:28px;font-weight:700;color:var(--text);}
+.hl-stat-label{font-family:var(--font-mono);font-size:10px;color:var(--text-muted);letter-spacing:.15em;text-transform:uppercase;}
+.hl-stat-divider{width:1px;height:36px;background:var(--border-strong);}
+.hl-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;padding:40px 56px 0;}
+.hl-card{background:var(--bg);border:1px solid var(--border);border-top:3px solid var(--gold);border-radius:3px;padding:28px 24px;text-decoration:none;transition:all .25s;display:block;}
+.hl-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.07);border-color:var(--gold);}
+.hl-card-icon{font-size:22px;color:var(--gold);margin-bottom:14px;}
+.hl-card-title{font-family:var(--font-display);font-size:16px;font-weight:600;color:var(--text);margin-bottom:8px;}
+.hl-card-action{font-family:var(--font-mono);font-size:11px;color:var(--gold);letter-spacing:.08em;}
+</style>
+{% endblock %}

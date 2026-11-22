@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+    <style>
+        body { font-family: 'Arial', sans-serif; color: #333; }
+        .header { text-align: center; border-bottom: 2px solid #2c3e50; padding-bottom: 20px; margin-bottom: 30px; }
+        .title { color: #2c3e50; font-size: 24px; margin-bottom: 5px; }
+        .date { font-size: 12px; color: #7f8c8d; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th { background-color: #f8f9fa; color: #2c3e50; text-align: left; padding: 12px; border-bottom: 2px solid #dee2e6; }
+        td { padding: 12px; border-bottom: 1px solid #dee2e6; }
+        .badge { background-color: #3498db; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; }
+        .footer { position: fixed; bottom: 0; width: 100%; text-align: center; font-size: 10px; color: #bdc3c7; border-top: 1px solid #dee2e6; padding-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="title">BiblioFac - Bibliothèque de la Faculté</div>
+        <div class="title" style="font-size: 18px; color: #7f8c8d;">{{ title }}</div>
+        <div class="date">Généré le {{ "now"|date("d/m/Y H:i") }}</div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Rang</th>
+                <th>Titre du Livre</th>
+                <th>Auteur(s)</th>
+                <th style="text-align: center;">Nombre d'Emprunts</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for book in books %}
+                <tr>
+                    <td>#{{ loop.index }}</td>
+                    <td><strong>{{ book.title }}</strong></td>
+                    <td>—</td>
+                    <td style="text-align: center;"><span class="badge">{{ book.howMany }}</span></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="footer">
+        © {{ "now"|date("Y") }} BiblioFac - Système de Gestion de Bibliothèque Universitaire
+    </div>
+</body>
+</html>

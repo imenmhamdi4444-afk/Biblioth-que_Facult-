@@ -1,0 +1,36 @@
+﻿{% extends 'base.html.twig' %}
+{% block title %}Etudiants{% endblock %}
+{% block body %}
+<div class="page-header fade-up">
+  <div><div class="page-eyebrow">Gestion</div><h2>Etudiants</h2></div>
+  {% if is_granted('ROLE_ADMIN') %}<a href="{{ path('app_student_new') }}" class="btn btn-primary"><i class="bi bi-person-plus"></i> Nouvel etudiant</a>{% endif %}
+</div>
+<div class="table-wrapper fade-up">
+  <table class="table">
+    <thead><tr><th>Matricule</th><th>Nom complet</th><th>Filiere</th><th>Email</th><th class="text-end">Actions</th></tr></thead>
+    <tbody>
+    {% for student in students %}
+    <tr>
+      <td><code>{{ student.matricule ?? '#' ~ student.id }}</code></td>
+      <td>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:32px;height:32px;background:var(--gold-light);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--gold);font-family:var(--font-display);font-weight:700;font-size:13px;flex-shrink:0;">{{ student.name|first|upper }}</div>
+          <div>
+            <div style="font-weight:600;color:var(--text);">{{ student.name }} {{ student.surname|upper }}</div>
+          </div>
+        </div>
+      </td>
+      <td style="font-size:13px;color:var(--text-muted);">{{ student.department ?? '—' }}</td>
+      <td style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">{{ student.email ?? '—' }}</td>
+      <td class="text-end">
+        <a href="{{ path('app_student_show', {'id': student.id}) }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-eye"></i></a>
+        {% if is_granted('ROLE_ADMIN') %}<a href="{{ path('app_student_edit', {'id': student.id}) }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-pencil"></i></a>{% endif %}
+      </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="5"><div class="empty-state"><i class="bi bi-people"></i><p>Aucun etudiant enregistre.</p></div></td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,162 @@
+﻿{% extends 'base.html.twig' %}
+{% block title %}Mon Profil{% endblock %}
+{% block body %}
+
+<div class="page-header fade-up">
+    <div>
+        <div class="page-eyebrow">Compte</div>
+        <h2>Mon Profil</h2>
+    </div>
+</div>
+
+<div class="fade-up" style="display:grid;grid-template-columns:300px 1fr;gap:28px;align-items:start;">
+
+    {# ── Left: Profile card ── #}
+    <div style="display:flex;flex-direction:column;gap:16px;">
+
+        {# Avatar + identity #}
+        <div style="background:#fff;border:1px solid var(--border);border-top:3px solid var(--gold);border-radius:3px;padding:32px 24px;text-align:center;">
+            <div style="width:80px;height:80px;background:var(--gold-light);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--gold);font-family:var(--font-display);font-size:32px;font-weight:700;margin:0 auto 20px;border:3px solid var(--gold);">
+                {{ app.user.username|first|upper }}
+            </div>
+            <div style="font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--text);margin-bottom:4px;">
+                {{ app.user.firstName ?? '' }} {{ app.user.lastName ?? '' }}
+            </div>
+            <div style="font-family:var(--font-mono);font-size:12px;color:var(--text-muted);margin-bottom:16px;">
+                @{{ app.user.username }}
+            </div>
+            <div style="background:var(--bg-soft);border:1px solid var(--border);border-radius:2px;padding:8px 12px;font-family:var(--font-mono);font-size:12px;color:var(--text-muted);word-break:break-all;">
+                {{ app.user.email }}
+            </div>
+        </div>
+
+        {# Role badge #}
+        <div style="background:#fff;border:1px solid var(--border);border-radius:3px;padding:20px 24px;">
+            <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);letter-spacing:.15em;text-transform:uppercase;margin-bottom:12px;">Acces</div>
+            {% if is_granted('ROLE_ADMIN') %}
+            <div style="display:flex;align-items:center;gap:10px;">
+                <div style="width:36px;height:36px;background:var(--gold-light);border-radius:3px;display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:16px;">
+                    <i class="bi bi-shield-fill-check"></i>
+                </div>
+                <div>
+                    <div style="font-family:var(--font-ui);font-size:14px;font-weight:700;color:var(--text);">Administrateur</div>
+                    <div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">Acces complet</div>
+                </div>
+            </div>
+            {% else %}
+            <div style="display:flex;align-items:center;gap:10px;">
+                <div style="width:36px;height:36px;background:var(--bg-soft);border-radius:3px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:16px;">
+                    <i class="bi bi-person-fill"></i>
+                </div>
+                <div>
+                    <div style="font-family:var(--font-ui);font-size:14px;font-weight:700;color:var(--text);">Utilisateur</div>
+                    <div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">Acces standard</div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        {# Stats #}
+        <div style="background:#fff;border:1px solid var(--border);border-radius:3px;padding:20px 24px;">
+            <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);letter-spacing:.15em;text-transform:uppercase;margin-bottom:16px;">Statistiques</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+                <span style="font-family:var(--font-ui);font-size:13px;color:var(--text-muted);">Total emprunts</span>
+                <span style="font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--text);">{{ borrowings|length }}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+                <span style="font-family:var(--font-ui);font-size:13px;color:var(--text-muted);">En cours</span>
+                <span style="font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--gold);">{{ borrowings|filter(b => not b.bookReturned)|length }}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;">
+                <span style="font-family:var(--font-ui);font-size:13px;color:var(--text-muted);">Retournes</span>
+                <span style="font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--success);">{{ borrowings|filter(b => b.bookReturned)|length }}</span>
+            </div>
+        </div>
+
+        {# Quick links #}
+        {% if is_granted('ROLE_ADMIN') %}
+        <a href="{{ path('admin_dashboard') }}" class="btn btn-primary" style="justify-content:center;padding:12px;">
+            <i class="bi bi-speedometer2"></i> Tableau de bord
+        </a>
+        {% endif %}
+        <a href="{{ path('app_borrowing_new') }}" class="btn btn-outline-secondary" style="justify-content:center;padding:12px;">
+            <i class="bi bi-plus-circle"></i> Nouveau pret
+        </a>
+    </div>
+
+    {# ── Right: Borrowing history ── #}
+    <div>
+        <div style="background:#fff;border:1px solid var(--border);border-radius:3px;overflow:hidden;">
+            <div style="padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:var(--bg-soft);">
+                <div>
+                    <div style="font-family:var(--font-mono);font-size:10px;color:var(--gold);letter-spacing:.2em;text-transform:uppercase;margin-bottom:4px;">Historique</div>
+                    <div style="font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--text);">Mes emprunts</div>
+                </div>
+                <span style="background:var(--gold);color:#fff;font-family:var(--font-mono);font-size:12px;padding:4px 12px;border-radius:2px;">{{ borrowings|length }}</span>
+            </div>
+
+            {% if borrowings|length == 0 %}
+            <div style="text-align:center;padding:64px 32px;">
+                <i class="bi bi-inbox" style="font-size:2.5rem;color:var(--border-strong);display:block;margin-bottom:16px;"></i>
+                <div style="font-family:var(--font-display);font-size:17px;font-weight:600;color:var(--text);margin-bottom:8px;">Aucun emprunt</div>
+                <p style="font-family:var(--font-ui);font-size:13px;color:var(--text-muted);margin-bottom:20px;">Vous n'avez effectue aucun emprunt pour le moment.</p>
+                <a href="{{ path('app_book_index') }}" class="btn btn-primary btn-sm">
+                    <i class="bi bi-journal-bookmark-fill"></i> Parcourir le catalogue
+                </a>
+            </div>
+            {% else %}
+            <table class="table" style="margin:0;">
+                <thead>
+                    <tr>
+                        <th>Document</th>
+                        <th>Type</th>
+                        <th>Date emprunt</th>
+                        <th>Date limite</th>
+                        <th>Statut</th>
+                        <th class="text-end">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for b in borrowings %}
+                    {% set isLate = not b.bookReturned and b.dateDue and date() > b.dateDue %}
+                    <tr>
+                        <td>
+                            <div style="font-family:var(--font-display);font-weight:600;color:var(--text);font-size:14px;">
+                                {{ b.book ? b.book.title : (b.revue ? b.revue.title : '—') }}
+                            </div>
+                        </td>
+                        <td>
+                            {% if b.book %}<span class="badge bg-primary">Livre</span>
+                            {% elseif b.revue %}<span class="badge bg-info">Revue</span>{% endif %}
+                        </td>
+                        <td style="font-family:var(--font-mono);font-size:12px;color:var(--text-muted);">
+                            {{ b.dateBorrowed|date('d/m/Y') }}
+                        </td>
+                        <td style="font-family:var(--font-mono);font-size:12px;{% if isLate %}color:#9B2226;font-weight:600;{% else %}color:var(--text-muted);{% endif %}">
+                            {{ b.dateDue ? b.dateDue|date('d/m/Y') : '—' }}
+                            {% if isLate %}<i class="bi bi-exclamation-triangle-fill ms-1"></i>{% endif %}
+                        </td>
+                        <td>
+                            {% if b.bookReturned %}
+                                <span class="badge bg-success">Retourne</span>
+                            {% elseif isLate %}
+                                <span class="badge bg-danger">En retard</span>
+                            {% else %}
+                                <span class="badge bg-warning">En cours</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            <a href="{{ path('app_borrowing_show', {'id': b.id}) }}" class="btn btn-outline-secondary btn-sm">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+{% endblock %}

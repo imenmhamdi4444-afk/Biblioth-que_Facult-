@@ -1,0 +1,247 @@
+{% extends 'base.html.twig' %}
+{% block title %}Recherche{% endblock %}
+{% block body %}
+
+{# ── Search header ── #}
+<div style="background:var(--bg-soft);border-bottom:1px solid var(--border);padding:40px 56px 32px;" class="fade-up">
+    <div style="font-family:var(--font-mono);font-size:10px;color:var(--gold);letter-spacing:.2em;text-transform:uppercase;margin-bottom:12px;">Recherche avancee</div>
+    <h1 style="font-family:var(--font-display);font-size:32px;font-weight:700;color:var(--text);margin-bottom:24px;">Trouver un document</h1>
+
+    <form method="GET" action="{{ path('app_search') }}" id="search-form">
+        {# Main search bar #}
+        <div style="display:flex;gap:12px;max-width:700px;margin-bottom:20px;">
+            <div style="position:relative;flex:1;">
+                <i class="bi bi-search" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:16px;pointer-events:none;"></i>
+                <input type="text" name="q" value="{{ keyword }}"
+                       placeholder="Titre, auteur, code, mot-cle..."
+                       style="width:100%;padding:13px 14px 13px 44px;border:2px solid var(--border-strong);border-radius:3px;font-family:var(--font-ui);font-size:15px;color:var(--text);background:#fff;outline:none;transition:border-color .2s,box-shadow .2s;"
+                       onfocus="this.style.borderColor='var(--gold)';this.style.boxShadow='0 0 0 3px rgba(184,150,12,.1)'"
+                       onblur="this.style.borderColor='var(--border-strong)';this.style.boxShadow='none'">
+            </div>
+            <button type="submit" style="padding:13px 28px;background:var(--gold);color:#fff;border:none;border-radius:3px;font-family:var(--font-ui);font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;white-space:nowrap;transition:background .2s;" onmouseover="this.style.background='var(--gold-hover)'" onmouseout="this.style.background='var(--gold)'">
+                Rechercher
+            </button>
+            {% if hasQuery %}
+            <a href="{{ path('app_search') }}" style="padding:13px 16px;border:1px solid var(--border-strong);border-radius:3px;color:var(--text-muted);font-size:13px;display:flex;align-items:center;gap:6px;text-decoration:none;white-space:nowrap;transition:all .2s;" onmouseover="this.style.background='var(--bg-soft)'" onmouseout="this.style.background='transparent'">
+                <i class="bi bi-x-lg"></i> Effacer
+            </a>
+            {% endif %}
+        </div>
+
+        {# Filters row #}
+        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+
+            {# Type filter #}
+            <div style="display:flex;border:1px solid var(--border-strong);border-radius:3px;overflow:hidden;background:#fff;">
+                <label style="display:flex;align-items:center;gap:6px;padding:8px 14px;cursor:pointer;font-family:var(--font-mono);font-size:11px;letter-spacing:.05em;transition:all .15s;{% if type == 'all' %}background:var(--gold);color:#fff;{% else %}color:var(--text-muted);{% endif %}">
+                    <input type="radio" name="type" value="all" {% if type == 'all' %}checked{% endif %} style="display:none;" onchange="this.form.submit()"> Tout
+                </label>
+                <label style="display:flex;align-items:center;gap:6px;padding:8px 14px;cursor:pointer;font-family:var(--font-mono);font-size:11px;letter-spacing:.05em;border-left:1px solid var(--border);transition:all .15s;{% if type == 'book' %}background:var(--gold);color:#fff;{% else %}color:var(--text-muted);{% endif %}">
+                    <input type="radio" name="type" value="book" {% if type == 'book' %}checked{% endif %} style="display:none;" onchange="this.form.submit()"> <i class="bi bi-journal-bookmark-fill"></i> Livres
+                </label>
+                <label style="display:flex;align-items:center;gap:6px;padding:8px 14px;cursor:pointer;font-family:var(--font-mono);font-size:11px;letter-spacing:.05em;border-left:1px solid var(--border);transition:all .15s;{% if type == 'revue' %}background:var(--gold);color:#fff;{% else %}color:var(--text-muted);{% endif %}">
+                    <input type="radio" name="type" value="revue" {% if type == 'revue' %}checked{% endif %} style="display:none;" onchange="this.form.submit()"> <i class="bi bi-newspaper"></i> Revues
+                </label>
+            </div>
+
+            {# Author filter #}
+            <select name="author" onchange="this.form.submit()"
+                    style="padding:8px 12px;border:1px solid var(--border-strong);border-radius:3px;font-family:var(--font-mono);font-size:11px;color:var(--text);background:#fff;outline:none;cursor:pointer;min-width:160px;">
+                <option value="">Tous les auteurs</option>
+                {% for author in authors %}
+                <option value="{{ author.id }}" {% if authorId == author.id %}selected{% endif %}>
+                    {{ author.name }} {{ author.surname }}
+                </option>
+                {% endfor %}
+            </select>
+
+            {# Publisher filter #}
+            <select name="publisher" onchange="this.form.submit()"
+                    style="padding:8px 12px;border:1px solid var(--border-strong);border-radius:3px;font-family:var(--font-mono);font-size:11px;color:var(--text);background:#fff;outline:none;cursor:pointer;min-width:160px;">
+                <option value="">Tous les editeurs</option>
+                {% for publisher in publishers %}
+                <option value="{{ publisher.id }}" {% if publisherId == publisher.id %}selected{% endif %}>
+                    {{ publisher.raisonSociale }}
+                </option>
+                {% endfor %}
+            </select>
+
+            {# Availability filter #}
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-family:var(--font-mono);font-size:11px;color:var(--text-muted);padding:8px 14px;border:1px solid var(--border-strong);border-radius:3px;background:{% if availableOnly %}var(--gold-light){% else %}#fff{% endif %};transition:all .15s;">
+                <input type="checkbox" name="available" value="1" {% if availableOnly %}checked{% endif %} onchange="this.form.submit()"
+                       style="accent-color:var(--gold);width:14px;height:14px;">
+                <i class="bi bi-check-circle{% if availableOnly %}-fill{% endif %}" style="color:var(--gold)"></i>
+                Disponibles uniquement
+            </label>
+        </div>
+    </form>
+</div>
+
+{# ── Results ── #}
+<div style="padding:36px 56px;" class="fade-up">
+
+    {% if not hasQuery %}
+    {# Empty state — no search yet #}
+    <div style="text-align:center;padding:80px 32px;">
+        <i class="bi bi-search" style="font-size:3rem;color:var(--border-strong);display:block;margin-bottom:16px;"></i>
+        <div style="font-family:var(--font-display);font-size:20px;font-weight:600;color:var(--text);margin-bottom:8px;">Commencez votre recherche</div>
+        <p style="font-family:var(--font-ui);font-size:14px;color:var(--text-muted);max-width:400px;margin:0 auto;">Utilisez la barre de recherche ci-dessus pour trouver des livres, revues, ou filtrez par auteur, editeur et disponibilite.</p>
+    </div>
+
+    {% elseif totalResults == 0 %}
+    {# No results #}
+    <div style="text-align:center;padding:80px 32px;">
+        <i class="bi bi-journal-x" style="font-size:3rem;color:var(--border-strong);display:block;margin-bottom:16px;"></i>
+        <div style="font-family:var(--font-display);font-size:20px;font-weight:600;color:var(--text);margin-bottom:8px;">Aucun resultat</div>
+        <p style="font-family:var(--font-ui);font-size:14px;color:var(--text-muted);">Aucun document ne correspond a votre recherche. Essayez d'autres mots-cles ou modifiez les filtres.</p>
+    </div>
+
+    {% else %}
+    {# Results header #}
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:28px;padding-bottom:16px;border-bottom:1px solid var(--border);">
+        <div>
+            <span style="font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--text);">{{ totalResults }} resultat{{ totalResults > 1 ? 's' : '' }}</span>
+            {% if keyword %}<span style="font-family:var(--font-mono);font-size:12px;color:var(--text-muted);margin-left:12px;">pour « {{ keyword }} »</span>{% endif %}
+        </div>
+        <div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">
+            {% if books|length > 0 %}<span style="margin-right:16px;"><i class="bi bi-journal-bookmark-fill" style="color:var(--gold);margin-right:4px;"></i>{{ books|length }} livre{{ books|length > 1 ? 's' : '' }}</span>{% endif %}
+            {% if revues|length > 0 %}<span><i class="bi bi-newspaper" style="color:var(--gold);margin-right:4px;"></i>{{ revues|length }} revue{{ revues|length > 1 ? 's' : '' }}</span>{% endif %}
+        </div>
+    </div>
+
+    {# Books results #}
+    {% if books|length > 0 %}
+    <div style="margin-bottom:40px;">
+        {% if type == 'all' %}
+        <div style="font-family:var(--font-mono);font-size:10px;color:var(--gold);letter-spacing:.2em;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:8px;">
+            <i class="bi bi-journal-bookmark-fill"></i> Livres ({{ books|length }})
+        </div>
+        {% endif %}
+        <div class="table-wrapper">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Couverture</th>
+                        <th>Titre</th>
+                        <th>Auteur(s)</th>
+                        <th>Editeur</th>
+                        <th>Annee</th>
+                        <th>Disponibilite</th>
+                        <th class="text-end">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for book in books %}
+                <tr>
+                    <td>
+                        {% if book.image %}
+                            <img src="{{ asset('uploads/covers/' ~ book.image) }}" alt="{{ book.title }}" style="width:36px;height:50px;object-fit:cover;border-radius:2px;border:1px solid var(--border);">
+                        {% else %}
+                            <div style="width:36px;height:50px;background:var(--gold-light);border-radius:2px;display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:13px;"><i class="bi bi-book"></i></div>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div style="font-family:var(--font-display);font-weight:600;color:var(--text);font-size:14px;">{{ book.title }}</div>
+                        <code style="font-size:.7rem;">{{ book.code }}</code>
+                        {% if book.keywords %}
+                        <div style="margin-top:4px;">
+                            {% for kw in book.keywords|split(',')|slice(0,3) %}
+                                <span class="badge-keyword">{{ kw|trim }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </td>
+                    <td style="font-size:13px;">
+                        {% for a in book.authors %}<span class="badge bg-secondary">{{ a }}</span> {% else %}—{% endfor %}
+                    </td>
+                    <td style="font-size:12px;color:var(--text-muted);">{{ book.publisher ? book.publisher.raisonSociale : '—' }}</td>
+                    <td style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">{{ book.publicationDate ? book.publicationDate|date('Y') : '—' }}</td>
+                    <td>
+                        {% set available = book.nbCopiesAcquired - book.nbCopiesBorrowed %}
+                        {% if available > 0 %}
+                            <span class="badge bg-success">{{ available }} dispo</span>
+                        {% else %}
+                            <span class="badge bg-danger">Epuise</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end">
+                        <a href="{{ path('app_book_show', {'id': book.id}) }}" class="btn btn-outline-secondary btn-sm">
+                            <i class="bi bi-eye"></i> Voir
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    {# Revues results #}
+    {% if revues|length > 0 %}
+    <div>
+        {% if type == 'all' %}
+        <div style="font-family:var(--font-mono);font-size:10px;color:var(--gold);letter-spacing:.2em;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:8px;">
+            <i class="bi bi-newspaper"></i> Revues ({{ revues|length }})
+        </div>
+        {% endif %}
+        <div class="table-wrapper">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Couverture</th>
+                        <th>Titre</th>
+                        <th>Periodicite</th>
+                        <th>Editeur</th>
+                        <th>Disponibilite</th>
+                        <th class="text-end">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for revue in revues %}
+                <tr>
+                    <td>
+                        {% if revue.image %}
+                            <img src="{{ asset('uploads/covers/' ~ revue.image) }}" alt="{{ revue.title }}" style="width:36px;height:50px;object-fit:cover;border-radius:2px;border:1px solid var(--border);">
+                        {% else %}
+                            <div style="width:36px;height:50px;background:var(--gold-light);border-radius:2px;display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:13px;"><i class="bi bi-newspaper"></i></div>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div style="font-family:var(--font-display);font-weight:600;color:var(--text);font-size:14px;">{{ revue.title }}</div>
+                        <code style="font-size:.7rem;">{{ revue.code }}</code>
+                        {% if revue.keywords %}
+                        <div style="margin-top:4px;">
+                            {% for kw in revue.keywords|split(',')|slice(0,3) %}
+                                <span class="badge-keyword">{{ kw|trim }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </td>
+                    <td>{% if revue.periodicity %}<span class="badge bg-info">{{ revue.periodicity }}</span>{% else %}—{% endif %}</td>
+                    <td style="font-size:12px;color:var(--text-muted);">{{ revue.publisher ? revue.publisher.raisonSociale : '—' }}</td>
+                    <td>
+                        {% set available = revue.nbCopiesAcquired - revue.nbCopiesBorrowed %}
+                        {% if available > 0 %}
+                            <span class="badge bg-success">{{ available }} dispo</span>
+                        {% else %}
+                            <span class="badge bg-danger">Epuise</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end">
+                        <a href="{{ path('app_revue_show', {'id': revue.id}) }}" class="btn btn-outline-secondary btn-sm">
+                            <i class="bi bi-eye"></i> Voir
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    {% endif %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+{% block title %}Modifier etudiant{% endblock %}
+{% block body %}
+<div class="page-header fade-up">
+    <div><div class="page-eyebrow">Etudiants / Modifier</div><h2>{{ student.name }} {{ student.surname|upper }}</h2></div>
+    <a href="{{ path('app_student_index') }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Retour</a>
+</div>
+<div class="row justify-content-center fade-up">
+    <div class="col-md-7">
+        <div class="card mb-3">
+            <div class="card-header">Mise a jour des informations</div>
+            <div class="card-body">
+                {{ form_start(form) }}
+                    {{ form_widget(form) }}
+                    <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
+                        <button class="btn btn-primary"><i class="bi bi-floppy"></i> Enregistrer</button>
+                        <a href="{{ path('app_student_index') }}" class="btn btn-outline-secondary ms-2">Annuler</a>
+                    </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+        <div class="card" style="border-color:#FCA5A5;">
+            <div class="card-header" style="color:#9B2226;background:#FEF2F2;">Zone de danger</div>
+            <div class="card-body">
+                <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">La suppression d'un etudiant est definitive.</p>
+                {{ include('student/_delete_form.html.twig') }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

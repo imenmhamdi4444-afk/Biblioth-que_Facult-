@@ -1,0 +1,13 @@
+﻿{% extends 'base.html.twig' %}
+{% block title %}Nouveau livre{% endblock %}
+{% block body %}
+<div class="page-header fade-up">
+    <div><div class="page-eyebrow">Livres</div><h2>Nouveau livre</h2></div>
+    <a href="{{ path('app_book_index') }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Retour</a>
+</div>
+<div class="row justify-content-center fade-up">
+    <div class="col-md-10">
+        <div class="card"><div class="card-body">{{ include('book/_form.html.twig') }}</div></div>
+    </div>
+</div>
+{% endblock %}

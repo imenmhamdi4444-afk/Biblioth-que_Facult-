@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+{% block title %}Nouvel auteur{% endblock %}
+{% block body %}
+<div class="page-header fade-up">
+    <div><div class="page-eyebrow">Auteurs</div><h2>Nouvel auteur</h2></div>
+    <a href="{{ path('app_author_index') }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Retour</a>
+</div>
+<div class="row justify-content-center fade-up">
+    <div class="col-md-8">
+        <div class="card"><div class="card-body">{{ include('author/_form.html.twig') }}</div></div>
+    </div>
+</div>
+{% endblock %}

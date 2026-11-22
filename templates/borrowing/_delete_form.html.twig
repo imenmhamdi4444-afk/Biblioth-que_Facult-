@@ -1,0 +1,7 @@
+<form method="post" action="{{ path('app_borrowing_delete', {'id': borrowing.id}) }}"
+      onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce prêt ? Cette action est irréversible.')">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ borrowing.id) }}">
+    <button class="btn btn-danger btn-sm">
+        <i class="bi bi-trash me-1"></i>Supprimer ce prêt
+    </button>
+</form>

@@ -1,0 +1,14 @@
+﻿{% extends 'base.html.twig' %}
+{% block title %}Modifier le Pret{% endblock %}
+{% block body %}
+<div class="page-header fade-up">
+  <div><div class="page-eyebrow">Prets / Modifier</div><h2>Modifier le pret</h2></div>
+  <a href="{{ path('app_borrowing_index') }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Retour</a>
+</div>
+<div class="row justify-content-center fade-up">
+  <div class="col-md-7">
+    <div class="card mb-3"><div class="card-body">{{ form_start(form) }}{{ form_widget(form) }}<div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);"><button class="btn btn-primary"><i class="bi bi-floppy"></i> Enregistrer</button><a href="{{ path('app_borrowing_index') }}" class="btn btn-outline-secondary ms-2">Annuler</a></div>{{ form_end(form) }}</div></div>
+    <div class="card" style="border-color:#FCA5A5;"><div class="card-header" style="color:#9B2226;background:#FEF2F2;">Zone de danger</div><div class="card-body">{{ include('borrowing/_delete_form.html.twig') }}</div></div>
+  </div>
+</div>
+{% endblock %}

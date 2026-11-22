@@ -1,0 +1,51 @@
+﻿{% extends 'base.html.twig' %}
+{% block title %}Detail du Pret{% endblock %}
+{% block body %}
+<div class="page-header fade-up">
+  <div><div class="page-eyebrow">Prets</div><h2>Detail du pret</h2></div>
+  <a href="{{ path('app_borrowing_index') }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Retour</a>
+</div>
+<div class="row justify-content-center fade-up">
+  <div class="col-md-7">
+    <div class="card">
+      <div class="card-header">Recapitulatif</div>
+      <div class="card-body">
+        <div class="row g-4">
+          <div class="col-sm-6">
+            <div class="form-label">Etudiant</div>
+            <div style="font-family:var(--font-display);font-size:16px;font-weight:600;color:var(--text);">{{ borrowing.student.name }} {{ borrowing.student.surname }}</div>
+            {% if borrowing.student.matricule %}<div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);margin-top:3px;">{{ borrowing.student.matricule }}</div>{% endif %}
+          </div>
+          <div class="col-sm-6">
+            <div class="form-label">Document</div>
+            <div style="font-family:var(--font-display);font-size:16px;font-weight:600;color:var(--text);">
+              {% if borrowing.book %}{{ borrowing.book.title }} <span class="badge bg-primary ms-1">Livre</span>
+              {% elseif borrowing.revue %}{{ borrowing.revue.title }} <span class="badge bg-info ms-1">Revue</span>{% endif %}
+            </div>
+          </div>
+          <div class="col-sm-4"><div class="form-label">Date d'emprunt</div><div style="font-family:var(--font-mono);font-size:12px;">{{ borrowing.dateBorrowed ? borrowing.dateBorrowed|date('d/m/Y') : '—' }}</div></div>
+          <div class="col-sm-4"><div class="form-label">Date limite</div><div style="font-family:var(--font-mono);font-size:12px;{% if borrowing.isOverdue %}color:#9B2226;font-weight:600;{% endif %}">{{ borrowing.dateDue ? borrowing.dateDue|date('d/m/Y') : '—' }}</div></div>
+          <div class="col-sm-4"><div class="form-label">Retourne le</div><div style="font-family:var(--font-mono);font-size:12px;">{{ borrowing.dateReturned ? borrowing.dateReturned|date('d/m/Y') : '—' }}</div></div>
+          <div class="col-12">
+            <div class="form-label">Statut</div>
+            {% if borrowing.bookReturned %}<span class="badge bg-success">Retourne</span>
+            {% elseif borrowing.isOverdue %}<span class="badge bg-danger">En retard</span>
+            {% else %}<span class="badge bg-warning">En cours</span>{% endif %}
+          </div>
+        </div>
+        <div style="margin-top:28px;padding-top:20px;border-top:1px solid var(--border);display:flex;gap:10px;">
+          {% if is_granted('ROLE_USER') and not borrowing.bookReturned %}
+          <form method="post" action="{{ path('app_borrowing_return', {'id': borrowing.id}) }}" onsubmit="return confirm('Confirmer le retour ?')">
+            <input type="hidden" name="_token" value="{{ csrf_token('return' ~ borrowing.id) }}">
+            <button type="submit" class="btn btn-success btn-sm"><i class="bi bi-check-circle"></i> Marquer retourne</button>
+          </form>
+          {% endif %}
+          {% if is_granted('ROLE_ADMIN') %}
+          <a href="{{ path('app_borrowing_edit', {'id': borrowing.id}) }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-pencil"></i> Modifier</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

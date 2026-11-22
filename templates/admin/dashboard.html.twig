@@ -1,0 +1,46 @@
+﻿{% extends 'base.html.twig' %}
+{% block title %}Tableau de Bord{% endblock %}
+{% block body %}
+<div class="page-header fade-up">
+  <div><div class="page-eyebrow">Administration</div><h2>Tableau de bord</h2></div>
+</div>
+<div class="row g-3 mb-4 fade-up">
+  <div class="col-sm-6 col-xl-3"><div class="stat-card"><div class="stat-icon"><i class="bi bi-journal-bookmark-fill"></i></div><div><div class="stat-value">{{ totalBooks }}</div><div class="stat-label">Livres</div></div><a href="{{ path('app_book_index') }}" class="stretched-link"></a></div></div>
+  <div class="col-sm-6 col-xl-3"><div class="stat-card"><div class="stat-icon"><i class="bi bi-newspaper"></i></div><div><div class="stat-value">{{ totalRevues }}</div><div class="stat-label">Revues</div></div><a href="{{ path('app_revue_index') }}" class="stretched-link"></a></div></div>
+  <div class="col-sm-6 col-xl-3"><div class="stat-card"><div class="stat-icon"><i class="bi bi-people-fill"></i></div><div><div class="stat-value">{{ totalStudents }}</div><div class="stat-label">Etudiants</div></div><a href="{{ path('app_student_index') }}" class="stretched-link"></a></div></div>
+  <div class="col-sm-6 col-xl-3"><div class="stat-card"><div class="stat-icon"><i class="bi bi-arrow-left-right"></i></div><div><div class="stat-value">{{ totalBorrowings }}</div><div class="stat-label">Prets total</div></div><a href="{{ path('app_borrowing_index') }}" class="stretched-link"></a></div></div>
+</div>
+<div class="row g-3 mb-4 fade-up">
+  <div class="col-md-6"><div class="stat-card"><div class="stat-icon"><i class="bi bi-hourglass-split"></i></div><div><div class="stat-value">{{ activeBorrowings }}</div><div class="stat-label">Prets en cours</div></div></div></div>
+  <div class="col-md-6"><div class="stat-card {% if overdueBorrowings > 0 %}border-danger{% endif %}"><div class="stat-icon" style="{% if overdueBorrowings > 0 %}background:#FEF2F2;color:#9B2226;{% endif %}"><i class="bi bi-exclamation-triangle-fill"></i></div><div><div class="stat-value {% if overdueBorrowings > 0 %}text-danger{% endif %}">{{ overdueBorrowings }}</div><div class="stat-label">Prets en retard</div></div></div></div>
+</div>
+{% if overdueList|length > 0 %}
+<div class="card mb-4 fade-up" style="border-color:#FCA5A5;">
+  <div class="card-header" style="color:#9B2226;background:#FEF2F2;"><i class="bi bi-exclamation-triangle-fill me-2"></i>Prets en retard — {{ overdueList|length }}</div>
+  <div class="table-wrapper" style="border:none;border-radius:0 0 3px 3px;">
+    <table class="table">
+      <thead><tr><th>Etudiant</th><th>Document</th><th>Date limite</th><th>Retard</th><th class="text-end">Action</th></tr></thead>
+      <tbody>
+      {% for b in overdueList %}
+      <tr>
+        <td><div style="font-weight:600;color:var(--text);">{{ b.student.name }} {{ b.student.surname }}</div>{% if b.student.matricule %}<div style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);">{{ b.student.matricule }}</div>{% endif %}</td>
+        <td>{% if b.book %}<span class="badge bg-primary me-1">Livre</span>{{ b.book.title }}{% elseif b.revue %}<span class="badge bg-info me-1">Revue</span>{{ b.revue.title }}{% endif %}</td>
+        <td style="font-family:var(--font-mono);font-size:11px;color:#9B2226;font-weight:600;">{{ b.dateDue|date('d/m/Y') }}</td>
+        <td>{% set days = (date()|date('U') - b.dateDue|date('U')) / 86400 %}<span class="badge bg-danger">{{ days|round(0, 'floor') }}j</span></td>
+        <td class="text-end"><a href="{{ path('app_borrowing_show', {'id': b.id}) }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-eye"></i></a></td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+<div class="row g-3 fade-up">
+  <div class="col-md-6">
+    <div class="card h-100"><div class="card-header"><i class="bi bi-bar-chart-fill me-2" style="color:var(--gold)"></i>Rapports</div><div class="card-body"><p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Statistiques d'utilisation de la bibliotheque.</p><div class="d-flex gap-2 flex-wrap"><a href="{{ path('most_popular_book') }}" class="btn btn-primary btn-sm"><i class="bi bi-star-fill"></i> Livres populaires</a><a href="{{ path('borrowing_book') }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-search"></i> Historique</a></div></div></div>
+  </div>
+  <div class="col-md-6">
+    <div class="card h-100"><div class="card-header"><i class="bi bi-lightning-charge-fill me-2" style="color:var(--gold)"></i>Actions rapides</div><div class="card-body"><p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Ajoutez rapidement des ressources.</p><div class="d-flex gap-2 flex-wrap"><a href="{{ path('app_book_new') }}" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg"></i> Livre</a><a href="{{ path('app_revue_new') }}" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg"></i> Revue</a><a href="{{ path('app_student_new') }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-plus-lg"></i> Etudiant</a><a href="{{ path('app_borrowing_new') }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-plus-lg"></i> Pret</a><a href="{{ path('app_user_index') }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-people-fill"></i> Utilisateurs</a></div></div></div>
+  </div>
+</div>
+{% endblock %}
